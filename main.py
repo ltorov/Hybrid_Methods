@@ -4,24 +4,34 @@ if __name__ == "__main__":
     from venv import create
     from os.path import join, expanduser, abspath
     from subprocess import run
+    import os
 
-    # # Create virtual environment
-    # try:
-    #     dir = join(expanduser("."), "venv")
-    #     create(dir, with_pip=True)
-    #     print("Virtual environment created on: ", dir)
-    # except Exception as e:
-    #     raise Exception("Failed to create the virtual environment: " + str(e))
+    # Create virtual environment
+    try:
+        dir = join(expanduser("."), "venv")
+        create(dir, with_pip=True)
+        print("Virtual environment created on: ", dir)
+    except Exception as e:
+        raise Exception("Failed to create the virtual environment: " + str(e))
 
-    # # Install packages in 'requirements.txt'.
-    # try:
-    #     run(["python3", "-m", "pip3", "install", "--upgrade", "pip3"])
-    #     run(["bin/pip3", "install", "-r", abspath("requirements.txt")], cwd=dir)
-    # except:
-    #     run(["python", "-m", "pip", "install", "--upgrade", "pip"])
-    #     run(["bin/pip", "install", "-r", abspath("requirements.txt")], cwd=dir)
-    # finally:
-    #     print("Completed installation of requirements.")
+    # Activate virtual environment
+    activate_script = join(dir, "bin", "activate")
+    try:
+        activate_cmd = f"source {activate_script}" if os.name != "nt" else activate_script
+        run(activate_cmd, shell=True, check=True)
+    except Exception as e:
+        raise Exception("Failed to activate the virtual environment: " + str(e))
+
+
+    # Install packages in 'requirements.txt'.
+    try:
+        run(["python3", "-m", "pip3", "install", "--upgrade", "pip3"])
+        run(["bin/pip3", "install", "-r", abspath("requirements.txt")], cwd=dir)
+    except:
+        run(["python", "-m", "pip", "install", "--upgrade", "pip"])
+        run(["bin/pip", "install", "-r", abspath("requirements.txt")], cwd=dir)
+    finally:
+        print("Completed installation of requirements.")
 
     import pandas as pd
     import numpy as np
@@ -42,5 +52,5 @@ if __name__ == "__main__":
     from src.auxiliary import partitioning
     from src.plotting import show_images, show_performance_curve, plot_reconstruction
 
-    leNet(plotting = True)
-    Gan(plotting = True)
+    # leNet(plotting = True)
+    # Gan(plotting = True)
